@@ -32,10 +32,10 @@ public class PasswordPhilosophy {
       Triplet<Integer, Integer, String> key = new Triplet<>();
 
       int indexOfDash = line.indexOf("-");
-      key.setLower(Integer.parseInt(line.substring(0, indexOfDash)));
+      key.setFirst(Integer.parseInt(line.substring(0, indexOfDash)));
 
       int indexOfSpace = line.indexOf(" ");
-      key.setUpper(Integer.parseInt(line.substring(indexOfDash + 1, indexOfSpace)));
+      key.setSecond(Integer.parseInt(line.substring(indexOfDash + 1, indexOfSpace)));
 
       key.setLetter(line.substring(indexOfSpace + 1, indexOfSpace + 2));
 
@@ -45,22 +45,36 @@ public class PasswordPhilosophy {
     return 0;
   }
 
-  private static int howManyValid() {
+  private static int howManyValid(int part) {
     int sum = 0;
-    for (Triplet<Integer, Integer, String> key : data.keySet()) {
-      if (isValid(key, data.get(key))) sum += 1;
+
+    if (part == 1) {
+      for (Triplet<Integer, Integer, String> key : data.keySet()) {
+        if (isValid1(key, data.get(key))) sum += 1;
+      }
+    } else {
+      for (Triplet<Integer, Integer, String> key : data.keySet()) {
+        if (isValid2(key, data.get(key))) sum += 1;
+      }
     }
     return sum;
   }
 
-  private static boolean isValid(Triplet<Integer, Integer, String> key, String password) {
+  private static boolean isValid1(Triplet<Integer, Integer, String> key, String password) {
     int count = 0;
     char letter = key.letter.toCharArray()[0];
     for (char car : password.toCharArray()) {
       if (car == letter) count += 1;
     }
 
-    return count >= key.lower && count <= key.upper;
+    return count >= key.first && count <= key.second;
+  }
+
+  private static boolean isValid2(Triplet<Integer, Integer, String> key, String password) {
+    char letter = key.letter.toCharArray()[0];
+
+    return (password.charAt(key.first - 1) == letter && password.charAt(key.second - 1) != letter) ||
+               (password.charAt(key.first - 1) != letter && password.charAt(key.second - 1) == letter);
   }
 
   public static void main(String[] args) {
@@ -69,32 +83,33 @@ public class PasswordPhilosophy {
       return;
     }
     System.out.println(data.keySet().size());
-    System.out.println("Answer: " + howManyValid());
+    System.out.println("Answer for part 1: " + howManyValid(1));
+    System.out.println("Answer for part 2: " + howManyValid(2));
   }
 
 }
 
 class Triplet<T, R, S> {
 
-  public T lower;
-  public R upper;
+  public T first;
+  public R second;
   public S letter;
 
-  public Triplet(T lower, R upper, S ch) {
-    this.lower = lower;
-    this.upper = upper;
+  public Triplet(T first, R second, S ch) {
+    this.first = first;
+    this.second = second;
     this.letter = ch;
   }
 
   public Triplet() {
   }
 
-  public void setLower(T lower) {
-    this.lower = lower;
+  public void setFirst(T first) {
+    this.first = first;
   }
 
-  public void setUpper(R upper) {
-    this.upper = upper;
+  public void setSecond(R second) {
+    this.second = second;
   }
 
   public void setLetter(S letter) {
@@ -103,7 +118,7 @@ class Triplet<T, R, S> {
 
   @Override
   public String toString() {
-    return lower + "-" + upper + " " + letter + ": ";
+    return first + "-" + second + " " + letter + ": ";
   }
 
 }
