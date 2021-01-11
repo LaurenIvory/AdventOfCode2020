@@ -1,5 +1,6 @@
 package Day2;
 
+import AdventSolver.AdventSolver;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -7,42 +8,37 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PasswordPhilosophy {
+public class PasswordPhilosophy extends AdventSolver {
 
   private static Map<Triplet<Integer, Integer, String>, String> data = new HashMap<>();
 
-  private static int readData() {
-    BufferedReader reader;
-    try {
-      reader = new BufferedReader(new FileReader("src/Day2/data"));
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
-      return -1;
-    }
+  public PasswordPhilosophy(String dataLocation) {
+    super(dataLocation);
+  }
 
-    String line;
-    while (true) {
-      try {
-        if ((line = reader.readLine()) == null) break;
-      } catch (IOException e) {
-        e.printStackTrace();
-        return -1;
-      }
+  @Override
+  public void processData(String line) {
+    Triplet<Integer, Integer, String> key = new Triplet<>();
 
-      Triplet<Integer, Integer, String> key = new Triplet<>();
+    int indexOfDash = line.indexOf("-");
+    key.setFirst(Integer.parseInt(line.substring(0, indexOfDash)));
 
-      int indexOfDash = line.indexOf("-");
-      key.setFirst(Integer.parseInt(line.substring(0, indexOfDash)));
+    int indexOfSpace = line.indexOf(" ");
+    key.setSecond(Integer.parseInt(line.substring(indexOfDash + 1, indexOfSpace)));
 
-      int indexOfSpace = line.indexOf(" ");
-      key.setSecond(Integer.parseInt(line.substring(indexOfDash + 1, indexOfSpace)));
+    key.setLetter(line.substring(indexOfSpace + 1, indexOfSpace + 2));
 
-      key.setLetter(line.substring(indexOfSpace + 1, indexOfSpace + 2));
+    data.put(key, line.substring(line.indexOf(' ', indexOfSpace + 1) + 1));
+  }
 
-      data.put(key, line.substring(line.indexOf(' ', indexOfSpace + 1) + 1));
-    }
+  @Override
+  public String solvePartOne() {
+    return howManyValid(1) + "";
+  }
 
-    return 0;
+  @Override
+  public String solvePartTwo() {
+    return howManyValid(2) + "";
   }
 
   private static int howManyValid(int part) {
@@ -78,13 +74,8 @@ public class PasswordPhilosophy {
   }
 
   public static void main(String[] args) {
-    if (readData() == -1) {
-      System.out.println("ERROR IN READING DATA, QUITTING");
-      return;
-    }
-    System.out.println(data.keySet().size());
-    System.out.println("Answer for part 1: " + howManyValid(1));
-    System.out.println("Answer for part 2: " + howManyValid(2));
+    AdventSolver solver = new PasswordPhilosophy("src/Day2/data");
+    solver.solve();
   }
 
 }

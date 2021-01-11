@@ -1,5 +1,6 @@
 package Day1;
 
+import AdventSolver.AdventSolver;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -7,31 +8,28 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 
-public class ReportRepair {
+public class ReportRepair extends AdventSolver {
 
   private static ArrayList<Integer> data = new ArrayList<>();
 
-  private static int readData() {
-    BufferedReader reader;
-    try {
-      reader = new BufferedReader(new FileReader("src/Day1/data"));
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
-      return -1;
-    }
+  public ReportRepair(String dataLocation) {
+    super(dataLocation);
+  }
 
-    String line;
-    while (true) {
-      try {
-        if ((line = reader.readLine()) == null) break;
-      } catch (IOException e) {
-        e.printStackTrace();
-        return -1;
-      }
-      data.add(Integer.parseInt(line));
-    }
+  @Override
+  public void processData(String line) {
+    data.add(Integer.parseInt(line));
+  }
 
-    return 0;
+  @Override
+  public String solvePartOne() {
+    data.sort(Comparator.naturalOrder());
+    return calculateForTwo(-1) + "";
+  }
+
+  @Override
+  public String solvePartTwo() {
+    return calculateForThree() + "";
   }
 
   private static int calculateForTwo(int idxToSkip) {
@@ -94,14 +92,8 @@ public class ReportRepair {
   }
 
   public static void main(String[] args) {
-    if (readData() < 0) {
-      System.out.println("ERROR OCCURED IN READDATA");
-      return;
-    }
-    data.sort(Comparator.naturalOrder());
-    System.out.println("Answer for part 1: " + calculateForTwo(-1));
-
-    System.out.println("Answer for part 2: " + calculateForThree());
+    AdventSolver solver = new ReportRepair("src/Day1/data");
+    solver.solve();
   }
 
 }
